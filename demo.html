@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="add-on/jquery.cluetip.css" type="text/css" />
+<style>
+.container{width:80%;}
+.calendar-box { width: 100%; float: left; padding: 0; margin: 0 0 8em 0; }
+.calendar-box ul { padding: 0; margin: 0 auto; width: 99.5%; text-align: center; list-style-type: none; }
+.calendar-box ul li { width: 13.6%; line-height: 74px; font-family: Arial, Helvetica, sans-serif; float: left; display: block; padding: 0; border-right: solid 2px #d6d6d6; border-bottom: solid 2px #d6d6d6; margin: 0; font-size: 1.666em; font-weight: normal; color: #67666b; }
+.calendar-box ul li.active { color: #fff; background: #ed1f24; }
+.calendar-box ul li.active a { color: #fff !important; font-family: sans-serif;}
+.calendar-box ul li:nth-child(7n) { border-right: none; }
+.border-bottom { width: 100%; float: left; height: 5px; background: #fff; margin: -3px 0 0 0; }
+.calendar-date-top { width: 90%; /* float: left;*/ padding: 2.75em 0; margin: 20px auto 50px auto; /*position: relative;*/ }
+.calendar-date-top ul { width: 100%; float: left; padding: 0; margin: 0; list-style-type: none; text-align: center; }
+.calendar-date-top ul li { width: auto; padding: 0; margin: 0 11px; display: inline-block; text-transform: uppercase; float: none; font-size: 2.5em; font-family: 'Roboto', sans-serif; font-weight: 400; color: #002157; }
+.calendar-date-top ul li a { text-decoration: none; color: #fff; }
+.calendar-date-top ul li img { margin: -10px 0 0; vertical-align: middle; }
+.calendar-date-top ul li:first-child { float: left; margin-left: 0.95em; }
+.calendar-date-top ul li:last-child { float: right; margin-right: 0.95em; }
+.calendar-date-top ul li a i { background: #002157; border-radius: 100%; color: #fff; float: left; font-size: 35px; height: 37px; line-height: 36px; padding: 0 0 0 11px; text-align: left; vertical-align: middle; width: 37px; }
+</style>
+<title>AJAX Calendar</title>
+
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div class="container">
+<div class="event-detailed-Calendar" id="calendar-container"></div>
+</div>
+
+
+ <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+ <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+ <script type="text/javascript" src="source/calendar.js"></script>
+ <script type="text/javascript" src="add-on/jquery.cluetip.min.js"></script>
+ 
+ <script>
+   
+  $(function(){
+    
+    Date.prototype.monthDays= function(){
+        var d= new Date(this.getFullYear(), this.getMonth()+1, 0);
+        return d.getDate();
+    };
+    var calendar_month = 6; //July [0-11]
+    var calendar_year = 2015;
+
+    var My = new Calendar(new Date(calendar_year, calendar_month));
+    var tmpl = _.template($.trim($("#calendar-template").html()));
+    $("#calendar-template").remove();
+    My.set
+    My.fetchData(function(data){
+        My.setEvents(data);
+	$("#calendar-container").html(tmpl({"events": My.getEvents(), "headers" : My.getHeader(), "month_year_string": My.getMonthYearStr(), "date": My.getCalendarDate()}));
+        $('ul.grid_calendar li.active a').cluetip({ 
+		height:'auto',
+		sticky:true,
+		dropShadow:true,
+		positionBy:'mouse', 
+		mouseOutClose:true,
+		arrows:false,
+		closePosition:'top',
+		closeText:'<img src="images/btn_close_tooltip.png" />',
+		fx: {             
+			open:'fadeIn',
+			openSpeed:'500' 
+		}
+	});
+    });
+	
+    // Click on newxt
+    $(document).on('click', '.next', function(e){
+            e.preventDefault();
+            var m =  My.getCalendarDate().getMonth();
+            var y =  My.getCalendarDate().getFullYear();
+                   m++;
+            if ( m > 11 ){ m = 0; y++; }
+            //console.log(m);console.log(y);	
+            My.setCalendarDate(new Date(y, m));
+                   $("#calendar-template").remove();
+                   My.fetchData(function(data){
+                       My.setEvents(data);
+                       $("#calendar-container").html(tmpl({"events": My.getEvents(), "headers" : My.getHeader(), "month_year_string": My.getMonthYearStr(), "date": My.getCalendarDate()}));
+                       $('ul.grid_calendar li.active a').cluetip({ 
+                            height:'auto',
+                            sticky:true,
+                            dropShadow:true,
+                            positionBy:'mouse', 
+                            mouseOutClose:true,
+                            arrows:false,
+                            closePosition:'top',
+                            closeText:'<img src="images/btn_close_tooltip.png" />',
+                            fx: {             
+                                    open:'fadeIn',
+                                    openSpeed:'500' 
+                            }
+                        });
+                   });
+    });
+
+    // Click on newxt
+    $(document).on('click', '.previous', function(e){
+            e.preventDefault();
+            var m =  My.getCalendarDate().getMonth();
+            var y =  My.getCalendarDate().getFullYear();
+                   m--;
+            if ( m < 0 ){ m = 11; y--; }
+            //console.log(m);console.log(y);	
+            My.setCalendarDate(new Date(y, m));
+                   $("#calendar-template").remove();
+                   My.fetchData(function(data){
+                       My.setEvents(data);
+                       $("#calendar-container").html(tmpl({"events": My.getEvents(), "headers" : My.getHeader(), "month_year_string": My.getMonthYearStr(), "date": My.getCalendarDate()}));
+                       $('ul.grid_calendar li.active a').cluetip({ 
+                            height:'auto',
+                            sticky:true,
+                            dropShadow:true,
+                            positionBy:'mouse', 
+                            mouseOutClose:true,
+                            arrows:false,
+                            closePosition:'top',
+                            closeText:'<img src="images/btn_close_tooltip.png" />',
+                            fx: {             
+                                    open:'fadeIn',
+                                    openSpeed:'500' 
+                            }
+                        });
+                   });
+    });
+});
+
+</script>
+
+<script type="text/html" id="calendar-template">
+  <div class="calendar-date-top">
+       <ul>
+           <li><a class="previous" title="Arrow" href="javascript:void(0);"><img src="images/date-left-arrow.jpg" alt="Images"></a></li>
+           <li><span class="grid_calendar month"><%= month_year_string %></span></li>
+           <li><a class="next" title="Arrow" href="javascript:void(0);"><img src="images/date-right-arrow.jpg" alt="Images"></a></li>
+       </ul>
+  </div>
+  <div class="calendar-box">
+
+  <ul class="grid_calendar">
+  
+  <% _.each(headers, function(header,i) { %>
+  <li class="heder"><%= header %></li>
+  <% }) %>
+  
+  <% _.each(_.range((1-date.getDay()), date.monthDays() + 1 ), function(day){ 
+  
+    if(day <= 0){
+  %>
+  <li> &nbsp; </li>
+  <% }else{ %>
+  
+  <% if (_.has(events, day)){ %>
+  <li class="active"><a href="_components/more_info_calendar_tooltip.php" rel="_components/more_info_calendar_tooltip.php?year=<%= date.getFullYear() %>&month=<%= (date.getMonth()+1) %>&day=<%= day %>&s=1&hash=<%= date.getTime()%>" title="<%= events[day].title %>"><%= day %></a></li>
+  <% }else{ %>
+  <li> <%= day %> </li>
+  <% } %>
+  
+  <% } %>
+  
+  <% }) %>
+  </ul>
+  <div class="border-bottom"></div>
+  </div>
+</script>
+
+</body>
+</html>
