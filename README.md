@@ -1,9 +1,9 @@
 # AJAX-Calendar
-AJAX-Calendar is JavaScript monthly calendar with events that getting by AJAX call.
+#### AJAX-Calendar is JavaScript monthly calendar with events that getting by AJAX call.
 
-Usage:
+##### Usage:
 
-Just Add fallowing code to your page.
+#### Just Add fallowing code to your page.
 
 ```
 <link rel="stylesheet" href="add-on/jquery.cluetip.css" type="text/css" />
