@@ -5,7 +5,7 @@ Usage:
 
 Just Add fallowing code to your page.
 
-
+```
 <link rel="stylesheet" href="add-on/jquery.cluetip.css" type="text/css" />
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -152,3 +152,4 @@ Just Add fallowing code to your page.
   <div class="border-bottom"></div>
   </div>
 </script>
+``
