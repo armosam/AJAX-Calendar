@@ -12,8 +12,8 @@ Just Add fallowing code to your page.
 <div class="container">
 <div class="event-detailed-Calendar" id="calendar-container"></div>
 </div>
-
-
+```
+```
  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
  <script type="text/javascript" src="source/calendar.js"></script>
@@ -152,4 +152,4 @@ Just Add fallowing code to your page.
   <div class="border-bottom"></div>
   </div>
 </script>
-``
+```
