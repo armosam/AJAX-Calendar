@@ -161,7 +161,7 @@
   <% }else{ %>
   
   <% if (_.has(events, day)){ %>
-  <li class="active"><a href="_components/more_info_calendar_tooltip.php" rel="_components/more_info_calendar_tooltip.php?year=<%= date.getFullYear() %>&month=<%= (date.getMonth()+1) %>&day=<%= day %>&s=1&hash=<%= date.getTime()%>" title="<%= events[day].title %>"><%= day %></a></li>
+  <li class="active"><a href="ajax-php/calendar_tooltip.php" rel="ajax-php/calendar_tooltip.php?year=<%= date.getFullYear() %>&month=<%= (date.getMonth()+1) %>&day=<%= day %>&s=1&hash=<%= date.getTime()%>" title="<%= events[day].title %>"><%= day %></a></li>
   <% }else{ %>
   <li> <%= day %> </li>
   <% } %>
