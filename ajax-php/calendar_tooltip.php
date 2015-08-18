@@ -3,10 +3,10 @@
 <?php 
 $session = new sessions();
 
-$day=intval($_GET['day']);
-$year=intval($_GET['year']);
-$month=intval($_GET['month']);
-$show_id=intval($_GET['show_id']);
+$day = filter_input(INPUT_GET, 'day', FILTER_SANITIZE_NUMBER_INT);
+$year = filter_input(INPUT_GET, 'year', FILTER_SANITIZE_NUMBER_INT);
+$month = filter_input(INPUT_GET, 'month', FILTER_SANITIZE_NUMBER_INT);
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
 if(!$day){
   $day=date('d');
@@ -26,12 +26,12 @@ $sql = "SELECT events.*, spaces.s_name as show_venue, shows.title as title, show
         WHERE events.e_status=1 AND events.e_date=STR_TO_DATE('".$date."', '%Y-%m-%d')
         ORDER BY STR_TO_DATE(CONCAT_WS(' ', events.e_date, events.e_time), '%Y-%m-%d %l:%i %p')";
 
-if(isset($_GET['show_id'])){
-$sql = "SELECT events.*, spaces.s_name as show_venue, shows.title as title 
+if(!empty($id)){
+$sql = "SELECT events.*, spaces.s_name as show_venue, shows.title as title, shows.show_id  
     FROM events LEFT JOIN shows on(events.e_show_id=shows.show_id) 
     JOIN spaces ON spaces.s_id=shows.show_venue
 WHERE events.e_status=1 AND events.e_date=STR_TO_DATE('".$date."', '%Y-%m-%d')
-AND events.e_show_id='".$show_id."'
+AND events.e_show_id='".$id."'
 ORDER BY STR_TO_DATE(CONCAT_WS(' ', events.e_date, events.e_time), '%Y-%m-%d %l:%i %p')";
 
 }
@@ -52,12 +52,14 @@ if($result=$session->mysqli->query($sql)){
 	
 	?>
             <li>
-            <h3><a><?=$event->title?></a></h3>
+                <h3><a href="<?php echo routing::short('show.php?id='.$event->show_id); ?>"><?=$event->title?></a></h3>
             <h4 class="date_time"><?=$event->e_time?>, <?=$event->show_venue?></h4>
 
 
             <br style="clear:both" />
-	<a href="<?=$event->e_ticket_link?>" ><strong>Get Tickets</strong></a>
+            <?php if (!empty($event->e_ticket_link)): ?>
+            <a href="<?=$event->e_ticket_link?>" ><strong>Get Tickets</strong></a>
+            <?php endif; ?>
     <?php
 	preg_match('/performance_id=(.*?)$/', $event->e_ticket_link, $ticket_id);
 
