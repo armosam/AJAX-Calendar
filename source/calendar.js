@@ -1,20 +1,21 @@
 /* 
  *  
  *  @author Armen Bablanyan
- *  @version ver 0.2  Jul 30, 2015 4:00:54 PM
+ *  @version ver 0.3  Jul 30, 2015 4:00:54 PM - Aug 18 2015 1:20:00 PM
  *  
  * Special Class for Creating Calendar object and managing it.
  * It will call AJAX to get events and display on the calendar.
  * @param {Date} currentDate Current date of calendar in format new Date(Year[4], Month[1-2])
+ * @param {int} id Integer ID of group ID or show ID to show events of only that group
  * @returns {Calendar} Object of Calendar
  *  
  *  Usage:
  *  
- <link rel="stylesheet" href="css/jquery.cluetip.css" type="text/css" />
- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
- <script type="text/javascript" src="admin/js/calendar.js"></script>
- <script type="text/javascript" src="js/jquery.cluetip.min.js"></script>
-   
+ *<link rel="stylesheet" href="css/jquery.cluetip.css" type="text/css" />
+ *<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+ *<script type="text/javascript" src="admin/js/calendar.js"></script>
+ *<script type="text/javascript" src="js/jquery.cluetip.min.js"></script>
+ *  
   $(function(){
     
     Date.prototype.monthDays= function(){
@@ -23,11 +24,11 @@
     };
     var calendar_month = 6; //July [0-11]
     var calendar_year = 2015;
+    var id = "1"; //event group ID or show_id
 
-    var My = new Calendar(new Date(calendar_year, calendar_month));
+    var My = new Calendar(new Date(calendar_year, calendar_month), id);
     var tmpl = _.template($.trim($("#calendar-template").html()));
     $("#calendar-template").remove();
-    My.set
     My.fetchData(function(data){
         My.setEvents(data);
 	$("#calendar-container").html(tmpl({"events": My.getEvents(), "headers" : My.getHeader(), "month_year_string": My.getMonthYearStr(), "date": My.getCalendarDate()}));
@@ -134,7 +135,7 @@
   <% }else{ %>
   
   <% if (_.has(events, day)){ %>
-  <li class="active"><a href="_components/more_info_calendar_tooltip.php" rel="_components/more_info_calendar_tooltip.php?year=<%= date.getFullYear() %>&month=<%= (date.getMonth()+1) %>&day=<%= day %>&s=1&hash=<%= date.getTime()%>" title="<%= events[day].title %>"><%= day %></a></li>
+  <li class="active"><a href="_components/more_info_calendar_tooltip.php" rel="_components/more_info_calendar_tooltip.php?year=<%= date.getFullYear() %>&month=<%= (date.getMonth()+1) %>&day=<%= day %>&id=<%= events[day].id %>&hash=<%= date.getTime()%>" title="<%= events[day].title %>"><%= day %></a></li>
   <% }else{ %>
   <li> <%= day %> </li>
   <% } %>
@@ -152,7 +153,7 @@
  *  
  * 
  */
-function Calendar(currentDate){
+function Calendar(currentDate, id){
 
 var _headers = ['S','M','T','W','T','F','S'];
 var _monthNames = [
@@ -165,6 +166,7 @@ var _monthNames = [
 this.currentDate = currentDate;
 this.year = currentDate.getFullYear();
 this.month = currentDate.getMonth();
+this.id = (id==='')?null:parseInt(id);
 this.events = {};
 
 /**
@@ -197,8 +199,8 @@ this.fetchData = function(callback){
 
     $.ajax({
         method: 'POST',
-        url: 'ajax-php/ajax_calendar_content.php',
-        data: {m: this.currentDate.getMonth()+1, y: this.currentDate.getFullYear(), hash: Date.now()},
+        url: '_components/ajax_calendar_content.php',
+        data: {m: this.currentDate.getMonth()+1, y: this.currentDate.getFullYear(), id: this.id, hash: Date.now()},
         dataType: 'json',
         success: callback,
         error: function(error){
